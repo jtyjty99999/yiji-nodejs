@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<description>易极付支付网关配置</description>
+	<context:component-scan base-package="com.yiji.openapi.sdk" />
+	<context:annotation-config />
+
+	<!-- 通讯transport -->
+	<bean id="apiSdkTransport" class="com.yiji.openapi.sdk.transport.HttpTransport" />
+
+	<!-- 签名器及工厂 -->
+	<bean id="apiSdkMd5Signer" class="com.yiji.openapi.sdk.sign.Md5Signer" />
+	<bean id="apiSdkSha1Signer" class="com.yiji.openapi.sdk.sign.Sha1Signer" />
+	<bean id="apiSdkSha256Signer" class="com.yiji.openapi.sdk.sign.Sha256Signer" />
+	<bean id="apiSdkRsaSigner" class="com.yiji.openapi.sdk.sign.RsaSigner" />
+	<bean id="apiSdkSignerFactory" class="com.yiji.openapi.sdk.sign.SignerFactoryImpl" />
+
+	<!-- 消息工厂 -->
+	<bean id="apiSdkmessageFactory"
+		class="com.yiji.openapi.sdk.message.impl.AnnotaionScanMessageFactory" />
+
+	<bean id="apiSdkCryptoHandler" class="com.yiji.openapi.sdk.security.ASECryptoHandler" />
+
+	<!--报文组装和解析 -->
+	<bean id="apiSdkRequestMarshal" class="com.yiji.openapi.sdk.marshall.impl.ApiSdkRequestMarshal">
+		<property name="signerFactory" ref="apiSdkSignerFactory" />
+		<property name="messageFactory" ref="apiSdkmessageFactory" />
+		<property name="cryptoHandler" ref="apiSdkCryptoHandler" />
+	</bean>
+
+	<bean id="apiSdkRedirectMarshal"
+		class="com.yiji.openapi.sdk.marshall.impl.ApiSdkRedirectMarshal">
+		<property name="signerFactory" ref="apiSdkSignerFactory" />
+		<property name="messageFactory" ref="apiSdkmessageFactory" />
+		<property name="cryptoHandler" ref="apiSdkCryptoHandler" />
+	</bean>
+
+	<bean id="apiSdkResponseUnmarshal"
+		class="com.yiji.openapi.sdk.marshall.impl.ApiSdkResponseUnmarshal">
+		<property name="signerFactory" ref="apiSdkSignerFactory" />
+		<property name="messageFactory" ref="apiSdkmessageFactory" />
+		<property name="cryptoHandler" ref="apiSdkCryptoHandler" />
+	</bean>
+
+	<bean id="apiSdkNotifyUnmarshal"
+		class="com.yiji.openapi.sdk.marshall.impl.ApiSdkNotifyUnmarshal">
+		<property name="signerFactory" ref="apiSdkSignerFactory" />
+		<property name="messageFactory" ref="apiSdkmessageFactory" />
+		<property name="cryptoHandler" ref="apiSdkCryptoHandler" />
+	</bean>
+
+	<bean id="apiSdkSignMarshal" class="com.yiji.openapi.sdk.marshall.impl.ApiSdkSignMarshal">
+		<property name="signerFactory" ref="apiSdkSignerFactory" />
+		<property name="messageFactory" ref="apiSdkmessageFactory" />
+		<property name="cryptoHandler" ref="apiSdkCryptoHandler" />
+	</bean>
+
+	<!-- api service client -->
+	<bean id="apiServiceClient" class="com.yiji.openapi.sdk.HttpApiServiceClient">
+		<property name="transport" ref="apiSdkTransport" />
+		<property name="requestMarshal" ref="apiSdkRequestMarshal" />
+		<property name="responseUnmarshal" ref="apiSdkResponseUnmarshal" />
+		<property name="notifyUnmarshal" ref="apiSdkNotifyUnmarshal" />
+		<property name="redirectMarshal" ref="apiSdkRedirectMarshal" />
+		<property name="sdkSignMarshal" ref="apiSdkSignMarshal" />
+	</bean>
+
+	<!-- 异步通知分发器 -->
+	<bean id="apiSdkDefaultNotifyHandlerDispatcher"
+		class="com.yiji.openapi.sdk.notify.DefaultNotifyHandlerDispatcher">
+		<property name="apiServiceClient" ref="apiServiceClient" />
+	</bean>
+
+	<!-- openApi SDK Client facade -->
+	<bean id="yijiPayClient" class="com.yiji.openapi.sdk.YijiPayClient">
+		<property name="apiServiceClient" ref="apiServiceClient" />
+	</bean>
+</beans>

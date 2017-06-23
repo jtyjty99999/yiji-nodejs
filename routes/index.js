@@ -1,59 +1,11 @@
-/* *
- *类名：AlipayConfig
- *功能：基础配置类
- *详细：设置帐户有关信息及返回路径
- *版本：3.2
- *日期：2011-03-17
- *说明：
- *以下代码只是为了方便商户测试而提供的样例代码，商户可以根据自己网站的需要，按照技术文档编写,并非一定要使用该代码。
- *该代码仅供学习和研究支付宝接口使用，只是提供一个参考。
 
- *提示：如何获取安全校验码和合作身份者ID
- *1.用您的签约支付宝账号登录支付宝网站(www.alipay.com)
- *2.点击“商家服务”(https://b.alipay.com/order/myOrder.htm)
- *3.点击“查询合作者身份(PID)”、“查询安全校验码(Key)”
-
- *安全校验码查看时，输入支付密码后，页面呈灰色的现象，怎么办？
- *解决方法：
- *1、检查浏览器配置，不让浏览器做弹框屏蔽设置
- *2、更换浏览器或电脑，重新登录查询。
- */
-var AlipayConfig = {
-    //↓↓↓↓↓↓↓↓↓↓请在这里配置您的基本信息↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    // 合作身份者ID，以2088开头由16位纯数字组成的字符串
-    partner:"",
-
-// 交易安全检验码，由数字和字母组成的32位字符串
-    key:"",
-
-// 签约支付宝账号或卖家收款支付宝帐户
-    seller_email:"",
-
-// 支付宝服务器通知的页面 要用 http://格式的完整路径，不允许加?id:123这类自定义参数
-// 必须保证其地址能够在互联网中访问的到
-    notify_url:"http://127.0.0.1:3000/paynotify",
-
-// 当前页面跳转后的页面 要用 http://格式的完整路径，不允许加?id:123这类自定义参数
-// 域名不能写成http://localhost/create_direct_pay_by_user_jsp_utf8/return_url.jsp ，否则会导致return_url执行无效
-    return_url:"http://127.0.0.1:3000/payreturn",
-
-//      支付宝通知验证地址
-
-    ALIPAY_HOST: "mapi.alipay.com",
-    HTTPS_VERIFY_PATH: "/gateway.do?service=notify_verify&",
-    ALIPAY_PATH:"gateway.do?",
-
-//↑↑↑↑↑↑↑↑↑↑请在这里配置您的基本信息↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-
-// 调试用，创建TXT日志路径
-    log_path:"~/alipay_log_.txt",
-
-// 字符编码格式 目前支持 gbk 或 utf-8
-    input_charset:"UTF-8",
-
-// 签名方式 不需修改
-    sign_type:"MD5"
+var YijiConfig = {
+// 商户id
+    partner:"20160825020000752433",
+// 密钥
+    key:"05a29a66557ad2f3634534a940d3577c",
+// 网管
+    url:"https://openapi.yijifu.net/gateway.html"
 };
 var AlipayNotify={
     verity:function(params,callback){
@@ -80,15 +32,6 @@ var AlipayNotify={
             callback(false);
         }
 
-        //写日志记录（若要调试，请取消下面两行注释）
-        //String sWord = "responseTxt=" + responseTxt + "\n notify_url_log:sign=" + sign + "&mysign="
-        //              + mysign + "\n 返回参数：" + AlipayCore.createLinkString(params);
-        //AlipayCore.logResult(sWord);
-
-
-        //验证
-        //responsetTxt的结果不是true，与服务器设置问题、合作身份者ID、notify_id一分钟失效有关
-        //mysign与sign不等，与安全校验码、请求时的参数格式（如：带自定义参数等）、编码格式有关
     }
 };
 //获取验证码
@@ -159,8 +102,8 @@ exports.index = function (req, res) {
  * @param req
  * @param res
  */
-exports.alipayto = function (req, res) {
-    //https://mapi.alipay.com/gateway.do?body=11&total_fee=0.01&subject=11&sign_type=MD5&service=create_direct_pay_by_user&notify_url=http%3A%2F%2Fwww.xxx.cn%2Fcreate_direct_pay_by_user_jsp_utf8%2Fnotify_url.jsp&out_trade_no=20120607141151&payment_type=1&show_url=http%3A%2F%2Fwww.xxx.com%2Forder%2Fmyorder.jsp&return_url=http%3A%2F%2F127.0.0.1%3A8080%2Fcreate_direct_pay_by_user_jsp_utf8%2Freturn_url.jsp
+exports.yijito = function (req, res) {
+    //https://apidoc.yiji.com/website/api_detail.html?sericeNo=espOrderPay_1.0&id=8a949fbe564a569d0156e36025ae00c3&sericeName=%E8%AE%A2%E5%8D%95%E6%94%AF%E4%BB%98&schemeName=%E6%96%B0%E5%A4%96%E5%8D%A1%E6%94%B6%E5%8D%95#espOrderPay_1.0
 //                                   /gateway.do?body=11&notify_url=http://www.xxx.cn/create_direct_pay_by_user_jsp_utf8/notify_url.jsp&out_trade_no=20120708132324&payment_type=1&return_url=http://127.0.0.1:8080/create_direct_pay_by_user_jsp_utf8/return_url.jsp&service=create_direct_pay_by_user&show_url=http://www.xxx.com/order/myorder.jsp&subject=11&total_fee=0.01&sign=dfc1995af2ff01642a3cf6936ce0d57c&sign_type=MD5
     ////////////////////////////////////请求参数//////////////////////////////////////
 
@@ -302,7 +245,7 @@ exports.alipayto = function (req, res) {
             };
             //待请求参数数组
             var sPara = buildRequestPara(sParaTemp);
-            var path=AlipayConfig.ALIPAY_PATH;
+            var path=YijiConfig.url;
 
 
             for (var i3 = 0; i3 < sPara.length; i3++) {
@@ -320,15 +263,14 @@ exports.alipayto = function (req, res) {
 
         return buildURL(sParaTemp);
     };
+    
     //构造函数，生成请求URL
     var sURL = create_direct_pay_by_user(sParaTemp);
-    console.log(sURL);
-    //向支付宝网关发出请求
-//    requestUrl(AlipayConfig.ALIPAY_HOST,show_url,function(data){
-//        console.log(data);
-//    });
-    res.redirect("https://"+AlipayConfig.ALIPAY_HOST+"/"+sURL);
+    
 };
+
+
+
 exports.paynotify=function(req,res){
     //http://127.0.0.1:3000/paynotify?trade_no=2008102203208746&out_trade_no=3618810634349901&discount=-5&payment_type=1&subject=iphone%E6%89%8B%E6%9C%BA&body=Hello&price=10.00&quantity=1&total_fee=10.00&trade_status=TRADE_FINISHED&refund_status=REFUND_SUCCESS&seller_email=chao.chenc1%40alipay.com&seller_id=2088002007018916&buyer_id=2088002007013600&buyer_email=13758698870&gmt_create=2008-10-22+20%3A49%3A31&is_total_fee_adjust=N&gmt_payment=2008-10-22+20%3A49%3A50&gmt_close=2008-10-22+20%3A49%3A46&gmt_refund=2008-10-29+19%3A38%3A25&use_coupon=N&notify_time=2009-08-12+11%3A08%3A32&notify_type=%E4%BA%A4%E6%98%93%E7%8A%B6%E6%80%81%E5%90%8C%E6%AD%A5%E9%80%9A%E7%9F%A5%28trade_status_sync%29&notify_id=70fec0c2730b27528665af4517c27b95&sign_type=DSA&sign=_p_w_l_h_j0b_gd_aejia7n_ko4_m%252Fu_w_jd3_nx_s_k_mxus9_hoxg_y_r_lunli_pmma29_t_q%253D%253D&extra_common_param=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E8%BF%99%E6%98%AF%E6%B5%8B%E8%AF%95%E5%95%86%E6%88%B7%E7%9A%84%E5%B9%BF%E5%91%8A%E3%80%82
     //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以下仅供参考)//
