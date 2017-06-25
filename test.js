@@ -1,3 +1,14 @@
+/*
+var YijiConfig = {
+// 商户id
+    partner:"20170413020014185029",
+// 密钥
+    key:"21a121c1ca7c146581292c28892971f8",
+// 网管
+    url:"https://openapi.yijifu.net/gateway.html?"
+};
+*/
+
 var YijiConfig = {
 // 商户id
     partner:"20160825020000752433",
@@ -6,8 +17,6 @@ var YijiConfig = {
 // 网管
     url:"https://openapi.yijifu.net/gateway.html?"
 };
-
-
 
 /**
  * 在应用中发送付款请求，替换掉构造form的应用
@@ -18,30 +27,73 @@ var yijito = function () {
     //https://apidoc.yiji.com/website/api_detail.html?sericeNo=espOrderPay_1.0&id=8a949fbe564a569d0156e36025ae00c3&sericeName=%E8%AE%A2%E5%8D%95%E6%94%AF%E4%BB%98&schemeName=%E6%96%B0%E5%A4%96%E5%8D%A1%E6%94%B6%E5%8D%95#espOrderPay_1.0
 
     //请与贵网站订单系统中的唯一订单号匹配
-    var orderNo = '20120708132325121';
+    var orderNo = '21180291139424518';
     var service = 'espOrderPay';
     var partnerId = YijiConfig.partner;
     var signType = 'MD5';
 
+    var goodsInfoList = [{
+        	'goodsNumber' : 'SKU001234',	//货号
+            'goodsName' : '货名test',	//货物名称
+            'goodsCount' : '1',	//货物数量
+            'itemSharpProductcode' : '分类',	//商品分类
+            'itemSharpUnitPrice': '1'	//商品单价
+    }];
+
+   var orderDetail = {
+    'ipAddress' : '113.204.226.234',	//IP地址
+	'billtoCountry' : 'China',	//账单国家
+	'billtoState' : 'CA',	//账单州
+	'billtoCity' : 'Covina',	//账单城市
+	'billtoPostalcode' : '91723',	//账单邮编
+	'billtoEmail' : 'jimmy.lei@yiji.com',	//账单邮箱
+
+	'billtoFirstname' : 'James',	//接收账单人员名
+	'billtoLastname' : 'kobe',	//接收账单人员姓
+	'billtoPhonenumber' : '18602340234',	//账单电话
+	'billtoStreet' : '137 W San Bernardino Rd',	//账单街道
+
+	'shiptoCity' : 'Covina',	//收货城市
+	'shiptoCountry' : 'United States',	//收货国家
+	'shiptoFirstname' : 'James',	//收货人姓
+	'shiptoLastname' : 'kobe',	//收货人名
+	'shiptoEmail' : 'jimmy.lei@yiji.com',	//收货邮箱
+	'shiptoPhonenumber' : '18602340234',	//收货电话
+	'shiptoPostalcode' : '91723',	//收货邮编
+	'shiptoState' : 'CA',	//收货州
+	'shiptoStreet' : '137 W San Bernardino Rd',	//收货街道
+	'logisticsFee' : '0.00',	//物流费
+	'logisticsMode' : 'EMS',	//物流方式
+	'cardType' : 'Visa',	//卡类型
+	'customerEmail' : 'qixin@yiji.com',	//购买者邮箱
+	'customerPhonenumber' : '13996412842',	//购买者电话
+	'merchantEmail' : 'merchent@yiji.com',	//商户邮箱
+	'merchantName' : '重庆易极付有限公司',	//商户名
+	'addressLine1' : '',	//卡地址1
+	'addressLine2' : ''	//卡地址2
+}
+
     //把请求参数打包成数组
     var sParaTemp = [];
-
     sParaTemp.push(["orderNo", orderNo]);
     sParaTemp.push(["service", service]);
     sParaTemp.push(["partnerId", partnerId]);
     sParaTemp.push(["signType", signType]);
-
     // 业务接口
-    sParaTemp.push(["merchOrderNo", 123]);
-    sParaTemp.push(["goodsInfoList", '[{"goodsNumber":"3146165","goodsName":"笔记本电脑","goodsCount":"5","itemSharpProductcode":"计算机","itemSharpUnitPrice":"8888"}]']);
-    sParaTemp.push(["orderDetail", '{"ipAddress":"192.168.4.2","billtoCountry":"中国","billtoState":"重庆","billtoCity":"重庆","billtoPostalcode":"401254","billtoEmail":"ee@yiji.com","billtoFirstname":"三","billtoLastname":"张","billtoPhonenumber":"10086100101","billtoStreet":"渝北区黄山大道中段","shiptoCity":"Covina","shiptoCountry":"American","shiptoFirstname":"Tom","shiptoLastname":"July","shiptoEmail":"xx@gmail.com","shiptoPhonenumber":"10086100101","shiptoPostalcode":"89123452115","shiptoState":"CA","shiptoStreet":"137 W San Bernardino Rd.","logisticsFee":"422","logisticsMode":"顺丰","logisticsModeNumber":"45","cardType":"Visa","customerEmail":"xx@gmail.com","customerPhonenumber":"123645132645","merchantEmail":"ss@gmail.com","merchantName":"Clippinger Chevrolet Oldsmobile","addressLine1":"Mxkss","addressLine2":"The Status"}']);
+    sParaTemp.push(["merchOrderNo", '66668888wrwerewrwe777']);
+    sParaTemp.push(["goodsInfoList", JSON.stringify(goodsInfoList)]);
+    sParaTemp.push(["orderDetail", JSON.stringify(orderDetail)]);
     sParaTemp.push(["currency", 'CNY']);
-    sParaTemp.push(["userId", '20162546254684759658']);
+    sParaTemp.push(["userId", partnerId]);
     sParaTemp.push(["amount", '888.66']);
     sParaTemp.push(["webSite", 'de-front.com']);
-    sParaTemp.push(["endReturnURL", 'de-front.com']);
-    sParaTemp.push(["language", 'en']);
+    sParaTemp.push(["endReturnURL", 'http://de-front.com/return']);
+    sParaTemp.push(["returnUrl", 'http://de-front.com/return']);
+    sParaTemp.push(["notifyUrl", 'http://de-front.com/return']);
+    sParaTemp.push(["memo", '12222']);
+    sParaTemp.push(["acquiringType", 'CRDIT']);
     sParaTemp.push(["deviceFingerprintId", 'sfkjddge534314edsa']);
+
     /**
      * 构造即时到帐接口
      * @param sParaTemp 请求参数集合
